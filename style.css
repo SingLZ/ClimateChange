@@ -1,0 +1,353 @@
+/*
+  Add style rules for the body of a your webpage.
+  Note: These rules will be applied to all elements.
+*/
+body {
+
+    /* Add a background color or image */
+  background: linear-gradient(to bottom, #a1d6b8, #b1dd8c);
+    background-attachment: fixed;
+
+    /* Customize the font, size, and color for text*/
+    font-family: Arial;
+    font-size: 16px;
+    color: black;
+
+    /* Adjust the padding and margins */
+    padding-top: 0;
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+
+    margin-top: 0;
+    margin-left: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+
+}
+body.dark-mode {
+   background: linear-gradient(to bottom, #121212, #606060, #aaaaaa);
+    color: white;
+}
+
+body.dark-mode .navbar ul {
+    background-color: #38571a; /* Dark background color for the navbar */
+     
+}
+
+body.dark-mode .flex-row {
+  background-color: #063c08;
+    color: #ffffff; /* Adjust the text color as needed */
+}
+
+
+/*
+  Style Text: Add style rules for any headings (h1-6),
+  paragraphs and links
+*/
+
+h1 {
+color: #407056;
+  
+}
+
+h2 {
+color: #669c35;
+}
+
+/*
+h3 {
+
+}
+
+p {
+
+}
+
+a {
+
+}
+*/
+
+/*
+  Style Lists: Styles added to the ol or ul style rulesets affect the entire
+  list, while styles added to the li style ruleset affect individual list items
+
+
+
+ol {
+
+}
+
+ol li {
+
+}
+
+
+ul {
+
+}
+
+ul li {
+
+}
+*/
+
+/*
+  Style Buttons: Add style rules for any headings (h1-6),
+  paragraphs and links
+*/
+
+button {
+  background-color:  #407056;
+  border: none;
+  color: white;
+  font-size: 16px;
+  text-align: center;
+  padding: 15px 32px;
+  cursor: pointer;
+    margin: 0 10px;
+}
+
+.head-button-container {
+  text-align: center;
+}
+
+
+#theme-button {
+border-radius: 50%;
+  font-size: 10px;
+  width: 100px;
+}
+
+.dark-mode {
+background-color: black !important;
+  color: white;
+
+}
+
+/* Select and style elements by class name or ID */
+
+
+/* Example: This styles elements with class="header"*/
+
+
+
+
+/* Example: This styles an element with an id="header-img" */
+#header-img {
+  height: 400px;
+  width: auto;
+
+}
+
+a:link{
+  color: #ADE28A;
+}
+
+a:visited{
+  color: #407056;
+}
+
+a:hover{
+  color: #EDFA8B;
+}
+
+a:active{
+  color: #ADE28A;
+}
+
+.resize {
+  width: 500px;
+  height: auto;
+}
+
+
+
+
+
+/* Part 1: Navbar */
+
+/* General style rule set for all items in ul */
+.navbar{
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  background-color: #e0edd4;
+  width: 100%;
+
+  text-decoration: none;
+  z-index: 1000;
+
+}
+
+/* Style rule set for individual li */
+.navbar li {
+  display: block;
+  text-decoration: none;
+    margin: 30px;
+  float: none;
+
+  
+  
+}
+
+.navbar ul {
+    list-style-type: none; /* Remove bullets from list */
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+ top: 0;
+  
+  display: flex; 
+  justify-content: right;
+background-color: #e0edd4;
+  margin-right: 40px;
+  margin-top: 0;
+  text-decoration: none;
+  
+}
+
+
+/* Style rule set for hovered link */
+.navbar ul li a:hover {
+    font-weight: bold;
+  color: #669c35;
+
+  text-decoration: none;
+}
+
+
+
+
+/* Part 2: Flexbox */
+
+/* General style rule set for flex container */
+.flex-column {
+  display: flex;
+  flex-direction: column; /* Items will be stacked in columns */
+  align-items: center;
+  margin-top: 100px;
+}
+
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center; /* Center vertically */
+  justify-content: center; /* Center horizontally */
+  text-align: center; /* Center text within flex items */
+  background-color:#88d7c0 ;
+  border: 1px solid #38571a;
+  padding: 10px;
+
+}
+
+.flex-row img {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+
+
+
+
+.flex-links {
+  display: flex;
+  flex-direction: column;
+    color: black;
+    font-weight: bold;
+    text-align: center;
+  margin-bottom: 50px;
+}
+
+.petition-container{
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  width: 100;
+  padding-bottom: 50px;
+}
+
+.petition-para{
+  width: 55%;
+  padding-right: 10px;
+}
+
+.signatures{
+  width: 45%;
+  padding-right: 10px;
+  
+}
+/* Add to CSS file */
+.error {
+  border-style: solid;
+  border-width: 2px;
+  border-color: red;
+  background:pink;
+}
+
+/* CSS rule for the revealable class */
+.revealable {
+  position: relative;
+  transform: translateY(150px);
+  opacity: 0;
+  transition: all 2s ease;
+}
+
+/* CSS rule for the active class */
+.active {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* the modal that covers the background and prevents user interactions */
+.modal {
+  display: none; /* hides the modal from view by default*/
+  position: fixed; /* keeps the modal in one place */
+  z-index: 2; /* positions the modal on top of all other elements on the screen */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  background-color: rgba(0,0,0,0.4); /* 40% opacity black - other elements can still be seen */
+  flex-direction: column; /* these flexbox rules center the content on the screen */
+  align-items: center;
+  justify-content: center;
+}
+
+/* box that contains all the content and images */
+.modal-content {
+  background-color: lightsteelblue; /* update the colors and font sizes as you like */
+  color: black;
+  text-align: center;
+  font-size: 1.5rem;
+
+  max-width: 80%; /* Adjust the maximum width as needed */
+  padding: 20px; /* Add padding for better appearance */
+  box-sizing: border-box; /* Include padding in the total width/height */
+  display: flex; /* adds flexbox to center all items */
+  justify-content: center;
+  align-items: center;
+}
+
+#thanks-modal-content {
+  width: 100%; /* Set the width to 100% for full width */
+  max-width: 400px; /* Adjust the maximum width as needed */
+ 
+}
+
+#modal-text-container {
+  display: flex; /* adds flexbox to center the text and buttons (stretch feature) */
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#thanks-modal img {
+  max-width: 100%; /* Make the image responsive within its container */
+  height: auto;
+  max-height: 300px; /* Set a maximum height for the image */
+}
+
+
