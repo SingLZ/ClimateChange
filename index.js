@@ -24,7 +24,6 @@ const themeButton = document.getElementById("theme-button");
 const signNowButton = document.getElementById('sign-now-button');
 var signatures = [];
 
-let count = 3;
 let scaleFactor = 1;
 const modalImage = document.querySelector('#thanks-modal img');
 
@@ -49,7 +48,8 @@ function insertData(person) {
     ID: id,
     Hometown: person.hometown,
     Email: person.email,
-    Signature: person.signature
+    Signature: person.signature,
+    Timestamp: Date.now()
 
   } )
   .then(()=>{
@@ -61,28 +61,50 @@ function insertData(person) {
 };
 
 
-function getData (signatures) {
+const getData = async () => {
   const databaseRef = ref(getDatabase());
-  get(child(databaseRef, 'Users/')) 
-  .then((snapshot) => {
+  try {
+    const snapshot = await get(child(databaseRef, 'Users/')) 
     if (snapshot.exists()) {
       const users = snapshot.val();
-      const sortedKeys = Object.keys(users).sort((a, b) => b - a); //sort
+      const sortedKeys = Object.keys(users).sort((a, b) => users[b].Timestamp - users[a].Timestamp); // Sort keys by timestamp in descending order
+      signatures = [];
       // Iterate over the first 3 keys (most recent entries)
       for (let i = 0; i < 3 && i < sortedKeys.length; i++) {
         const key = sortedKeys[i];
-        signatures[i] = users[key].Signature;
+        signatures.push(users[key].Signature);
       }
-      console.log(signatures);
+      console.log("Updated signatures array:", signatures);
+      return signatures
     } else {
       console.log("No data available");
+      return []
     }
-  }).catch((error) => {
+  } catch(error) {
     console.error(error);
-  });
+    return [];
+  };
 };
 
-console.log(signatures);
+
+const getTotalUsers = async () => {
+  const databaseRef = ref(getDatabase());
+  try {
+    const snapshot = await get(child(databaseRef, 'Users/'));
+    if (snapshot.exists()) {
+      const users = snapshot.val();
+      const userCount = Object.keys(users).length;
+      console.log("Total number of users:", userCount);
+      return userCount;
+    } else {
+      console.log("No data available");
+      return 0;
+    }
+  } catch (error) {
+    console.error(error);
+    return 0;
+  }
+};
 
 
 
@@ -166,7 +188,6 @@ const toggleModal = (person) => {
   }, 4000); // Adjust the delay as needed
 };
 
-//
 const validateForm = () => {
   let containsErrors = false;
   const petitionInputs = document.getElementById("sign-petition").elements;
@@ -192,34 +213,28 @@ const validateForm = () => {
     if (!containsErrors) {
       insertData(person);
       toggleModal(person);
-      //displaySignature();
+      //Update Peptition Data
+      (async () => {
+        const signatures = await getData();
+        displaySignature(signatures);
+        displayTotalCount();
+    })();
     }
   } else {
     alert("Please Fill All Input Fields!")
   }
-}
-
+};
 
 // Function to display signature on site
 const displaySignature = (signatures) => {
-  const signatureParagraph1 = document.createElement('p');
-  const signatureParagraph2 = document.createElement('p');
-  const signatureParagraph3 = document.createElement('p');
-  
-  // Set the text content of the paragraph to the signature
-  signatureParagraph1.textContent = signatures[0];
-  signatureParagraph2.textContent = signatures[1];
-  signatureParagraph3.textContent = signatures[2];
-  
-
-  // Find where the signatures section is (by class)
+  console.log("Signatures array in displaySignatures:", signatures);
   const signaturesSection = document.querySelector('.signatures');
-
-  
-  // Add the signature to the signatures section
-  signaturesSection.appendChild(signatureParagraph1);
-  signaturesSection.appendChild(signatureParagraph2);
-  signaturesSection.appendChild(signatureParagraph3);
+  signaturesSection.innerHTML = ''; // Clear previous content
+  signatures.forEach((signatureText) => {
+    const signatureParagraph = document.createElement('p');
+    signatureParagraph.textContent = signatureText;
+    signaturesSection.appendChild(signatureParagraph);
+  });
 
 
 
@@ -245,9 +260,31 @@ const displaySignature = (signatures) => {
 };
 
 
-getData(signatures);
-//
-//displaySignature();
+const displayTotalCount = () => {
+  const counter = document.getElementById('counter');
+  (async () => {
+    try{
+      const totalUsers = await getTotalUsers();
+      counter.innerText = 'There are ' + totalUsers +  ' total signatures recorded!'
+  } catch (error) {
+      console.error("Error fetching total users:", error);
+      counter.innerText = "Failed to fetch user count.";
+  }
+  })();
+};
+
+
+
+
+//Loading Initial Peptition Data
+(async () => {
+    const signatures = await getData();
+    displaySignature(signatures);
+    displayTotalCount();
+})();
+
+
+
 // Set toggleDarkMode as the callback function.
 themeButton.addEventListener("click", toggleDarkMode);
 
