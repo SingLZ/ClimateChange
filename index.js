@@ -1,101 +1,98 @@
-// TODO: Query for button with an id "theme-button"
-const themeButton = document.getElementById("theme-button");
 
-// TODO: Complete the toggleDarkMode function
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.1/firebase-app.js";
+import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/9.1.1/firebase-database.js"
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyAsRHoZeDZPz3RH7HltlrpEpzibL2XDkjM",
+  authDomain: "climate-change-828c5.firebaseapp.com",
+  databaseURL: "https://climate-change-828c5-default-rtdb.firebaseio.com",
+  projectId: "climate-change-828c5",
+  storageBucket: "climate-change-828c5.appspot.com",
+  messagingSenderId: "386635839947",
+  appId: "1:386635839947:web:16a23ec083fbce98ac5e4e"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const themeButton = document.getElementById("theme-button");
+const signNowButton = document.getElementById('sign-now-button');
+var signatures = [];
+
+let count = 3;
+let scaleFactor = 1;
+const modalImage = document.querySelector('#thanks-modal img');
+
+ function generateUUID() {
+  let uuid = '', randomValue;
+  for (let i = 0; i < 32; i++) {
+      randomValue = Math.random() * 16 | 0;
+
+      // Insert hyphens according to UUID format (8-4-4-4-12)
+      if (i === 8 || i === 12 || i === 16 || i === 20) {
+          uuid += '-';
+      }
+      uuid += (i === 12 ? 4 : (i === 16 ? (randomValue & 3 | 8) : randomValue)).toString(16);
+  }
+  return uuid;
+};
+ 
+function insertData(person) {
+  var id = generateUUID();
+  set(ref(db, "Users/" + id), {
+    Name: person.name,
+    ID: id,
+    Hometown: person.hometown,
+    Email: person.email,
+    Signature: person.signature
+
+  } )
+  .then(()=>{
+    alert("Data added successfully!")
+  })
+  .catch((error)=>{
+    alert(error)
+  });
+};
+
+
+function getData (signatures) {
+  const databaseRef = ref(getDatabase());
+  get(child(databaseRef, 'Users/')) 
+  .then((snapshot) => {
+    if (snapshot.exists()) {
+      const users = snapshot.val();
+      const sortedKeys = Object.keys(users).sort((a, b) => b - a); //sort
+      // Iterate over the first 3 keys (most recent entries)
+      for (let i = 0; i < 3 && i < sortedKeys.length; i++) {
+        const key = sortedKeys[i];
+        signatures[i] = users[key].Signature;
+      }
+      console.log(signatures);
+    } else {
+      console.log("No data available");
+    }
+  }).catch((error) => {
+    console.error(error);
+  });
+};
+
+console.log(signatures);
+
+
+
+//Function to change to dark mode
 const toggleDarkMode = () => {
   // Write your code to manipulate the DOM here
   document.body.classList.toggle("dark-mode");
 };
 
-// TODO: Register a 'click' event listener for the theme button
-// Set toggleDarkMode as the callback function.
-themeButton.addEventListener("click", toggleDarkMode);
-
-
-
-
-
-
-// TODO: Add your query for the sign now button here
-const signNowButton = document.getElementById('sign-now-button');
-
-let count = 3;
-
-// Function to add a signature
-const addSignature = (person) => {
-  // Create a new paragraph element for the signature
-  const signatureParagraph = document.createElement('p');
-
-  // Format the signature using the collected name and hometown from the person parameter
-  const signatureText = `🖊️ ${person.name} from ${person.hometown} supports this.`;
-
-  // Set the text content of the paragraph to the signature
-  signatureParagraph.textContent = signatureText;
-
-  // Find where the signatures section is (by class)
-  const signaturesSection = document.querySelector('.signatures');
-
-  // Add the new signature to the signatures section
-  signaturesSection.appendChild(signatureParagraph);
-
-  // Remove the old counter
-  const oldCounter = document.getElementById('counter');
-  oldCounter.remove();
-
-  // Increase the count variable
-  count = count + 1;
-
-  // Create a new counter HTML p tag
-  const counterElement = document.createElement('p');
-  // Set the id to "counter" for future reference
-  counterElement.id = 'counter';
-  // Set the text content for the new counter
-  counterElement.textContent = `🖊️ ${count} people have signed this petition and support this cause.`;
-
-  // Append the new counter to the signatures div
-  signaturesSection.appendChild(counterElement);
-
-  // Call toggleModal function after adding the signature
-  toggleModal(person);
-};
-
-
-
-
-
-
-// TODO: Remove the click event listener that calls addSignature()
-
-const validateForm = () => {
-  let containsErrors = false;
-  const petitionInputs = document.getElementById("sign-petition").elements;
-
-  let person = {
-    name: petitionInputs[0].value,
-    hometown: petitionInputs[1].value
-    // Add more properties as needed based on your form structure
-  };
-
-  for (let i = 0; i < petitionInputs.length; i++) {
-    if (person[petitionInputs[i].name] && person[petitionInputs[i].name].length < 2) {
-      petitionInputs[i].classList.add('error');
-      containsErrors = true;
-    } else {
-      petitionInputs[i].classList.remove('error');
-    }
-  }
-
-  if (!containsErrors) {
-    addSignature(person);
-  }
-};
-
-
-signNowButton.addEventListener('click', validateForm);
-
-
-
-// Animation configuration
+// Animation configuration for revealing when scrolling
 const animation = {
   revealDistance: 150,
   initialsOpacity: 0,
@@ -123,19 +120,7 @@ const reveal = () => {
   }
 };
 
-window.addEventListener('scroll', reveal);
-
-
-
-
-
-// Function to scale the image
-// Variables for image animation
-let scaleFactor = 1;
-const modalImage = document.querySelector('#thanks-modal img');
-
-// Function to scale the image
-// Function to scale the image
+// Function to scale the image for modal
 const scaleImage = () => {
   console.log('Scaling image...');
 
@@ -147,7 +132,6 @@ const scaleImage = () => {
 
   // You can add additional animation properties or styles as needed
 };
-
 
 // Function to toggle the modal
 const toggleModal = (person) => {
@@ -181,3 +165,94 @@ const toggleModal = (person) => {
     clearInterval(intervalId);
   }, 4000); // Adjust the delay as needed
 };
+
+//
+const validateForm = () => {
+  let containsErrors = false;
+  const petitionInputs = document.getElementById("sign-petition").elements;
+
+  if(petitionInputs[0].value && petitionInputs[1].value && petitionInputs[2].value ){
+    let person = {
+      name: petitionInputs[0].value,
+      hometown: petitionInputs[1].value,
+      email: petitionInputs[2].value,
+      signature: "🖊️ " + petitionInputs[0].value + " from " + petitionInputs[1].value + " supports this!"
+      // Add more properties as needed based on your form structure
+    };
+
+    for (let i = 0; i < petitionInputs.length; i++) {
+      if (person[petitionInputs[i].name] && person[petitionInputs[i].name].length < 2) {
+        petitionInputs[i].classList.add('error');
+        containsErrors = true;
+      } else {
+        petitionInputs[i].classList.remove('error');
+      }
+    }
+
+    if (!containsErrors) {
+      insertData(person);
+      toggleModal(person);
+      //displaySignature();
+    }
+  } else {
+    alert("Please Fill All Input Fields!")
+  }
+}
+
+
+// Function to display signature on site
+const displaySignature = (signatures) => {
+  const signatureParagraph1 = document.createElement('p');
+  const signatureParagraph2 = document.createElement('p');
+  const signatureParagraph3 = document.createElement('p');
+  
+  // Set the text content of the paragraph to the signature
+  signatureParagraph1.textContent = signatures[0];
+  signatureParagraph2.textContent = signatures[1];
+  signatureParagraph3.textContent = signatures[2];
+  
+
+  // Find where the signatures section is (by class)
+  const signaturesSection = document.querySelector('.signatures');
+
+  
+  // Add the signature to the signatures section
+  signaturesSection.appendChild(signatureParagraph1);
+  signaturesSection.appendChild(signatureParagraph2);
+  signaturesSection.appendChild(signatureParagraph3);
+
+
+
+
+  // // Remove the old counter
+  // const oldCounter = document.getElementById('counter');
+  // oldCounter.remove();
+
+  // // Increase the count variable
+  // count = count + 1;
+
+  // // Create a new counter HTML p tag
+  // const counterElement = document.createElement('p');
+  // // Set the id to "counter" for future reference
+  // counterElement.id = 'counter';
+  // // Set the text content for the new counter
+  // counterElement.textContent = `🖊️ ${count} people have signed this petition and support this cause.`;
+
+  // // Append the new counter to the signatures div
+  // signaturesSection.appendChild(counterElement);
+
+  // // Call toggleModal function after adding the signature
+};
+
+
+getData(signatures);
+//
+//displaySignature();
+// Set toggleDarkMode as the callback function.
+themeButton.addEventListener("click", toggleDarkMode);
+
+signNowButton.addEventListener('click', validateForm);
+
+window.addEventListener('scroll', reveal);
+
+
